@@ -109,10 +109,8 @@ export default class Board {
 
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
-        const location = new Point2D(x, y);
-
-        if (! location.equals(initialClick)) {
-          candidateLocations.push(location);
+        if (x < initialClick.x - 1 || x > initialClick.x + 1 || y < initialClick.y - 1 || y > initialClick.y + 1) {
+          candidateLocations.push(new Point2D(x, y));
         }
       }
     }
