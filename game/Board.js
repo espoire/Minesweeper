@@ -2,6 +2,12 @@ import { array, arrShuffle } from "../util/Array.js";
 import { Point2D } from "../util/Util.js";
 import Cell from "./Cell.js";
 
+const state = {
+  playing: 'Playing 🔎',
+  win: 'WIN 🚩',
+  lose: 'LOSE 💥',
+};
+
 export default class Board {
   constructor(width, height, mines) {
     this.width = width;
@@ -21,7 +27,7 @@ export default class Board {
       }
     }
 
-    this.gameState = 'Playing 🔎';
+    this.gameState = state.playing;
   }
 
   renderTo(containerTableEl, statusTextEl) {
@@ -55,9 +61,9 @@ export default class Board {
     const minesPerUnclicked = this.mines / unclicked;
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
-    if (unclicked === this.mines) {
+    if (this.gameState === state.playing && unclicked === this.mines) {
       setTimeout(() => alert('WIN 🎉'), 1);
-      this.gameState = 'WIN 🚩';
+      this.gameState = state.win;
       this.flagRemainingMines();
     }
 
@@ -72,7 +78,7 @@ export default class Board {
   }
 
   click(clicked) {
-    if (this.gameState !== 'Playing 🔎') return;
+    if (this.gameState !== state.playing) return;
     if (!this.minesPlaced) this.placeMines(clicked);
 
     const cell = this.board[clicked.x][clicked.y];
@@ -81,7 +87,7 @@ export default class Board {
     this.clicked++;
     cell.click();
     
-    if (this.gameState !== 'Playing 🔎') return;
+    if (this.gameState !== state.playing) return;
 
     if (cell.neighbors === 0) {
       for (const neighbor of this.getNeighbors(clicked)) {
@@ -157,7 +163,7 @@ export default class Board {
   }
 
   explode() {
-    this.gameState = 'LOSE 💥';
+    this.gameState = state.lose;
 
     alert("BOOM 💥");
 
