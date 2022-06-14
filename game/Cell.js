@@ -41,6 +41,11 @@ export default class Cell {
     this.revealed = true;
     if (this.mine) this.elements.button.innerText = '💣';
   }
+
+  flagMine() {
+    this.revealed = true;
+    if (this.mine) this.elements.button.innerText = '🚩';
+  }
 }
 
 function createMineCellElements(parent, x, y) {

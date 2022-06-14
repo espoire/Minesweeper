@@ -21,7 +21,7 @@ export default class Board {
       }
     }
 
-    this.gameOver = false;
+    this.gameState = 'Playing 🔎';
   }
 
   renderTo(containerTableEl, statusTextEl) {
@@ -55,17 +55,24 @@ export default class Board {
     const minesPerUnclicked = this.mines / unclicked;
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
+    if (unclicked === this.mines) {
+      setTimeout(() => alert('WIN 🎉'), 1);
+      this.gameState = 'WIN 🚩';
+      this.flagRemainingMines();
+    }
+
     return [
       `Board: ${this.width}x${this.height}`,
       `Mines: ${this.mines} 💣`,
       `Area: ${area} ⬜`,
       `Unclicked: ${unclicked} ⬜`,
-      `Average Chance of Mine in Random Cell: ${minesPerUnclickedPercent}% 💥`
+      `Average Chance of Mine in Random Cell: ${minesPerUnclickedPercent}% 💥`,
+      `Game State: ${this.gameState}`,
     ].join('\n');
   }
 
   click(clicked) {
-    if (this.gameOver) return;
+    if (this.gameState !== 'Playing 🔎') return;
     if (!this.minesPlaced) this.placeMines(clicked);
 
     const cell = this.board[clicked.x][clicked.y];
@@ -74,7 +81,7 @@ export default class Board {
     this.clicked++;
     cell.click();
     
-    if (this.gameOver) return;
+    if (this.gameState !== 'Playing 🔎') return;
 
     if (cell.neighbors === 0) {
       for (const neighbor of this.getNeighbors(clicked)) {
@@ -150,16 +157,23 @@ export default class Board {
   }
 
   explode() {
-    this.gameOver = true;
+    this.gameState = 'LOSE 💥';
 
     alert("BOOM 💥");
 
     this.revealRemainingMines();
+    this.updateStatus();
   }
 
   revealRemainingMines() {
     for (const cell of this.getCells()) {
       cell.revealMine();
+    }
+  }
+
+  flagRemainingMines() {
+    for (const cell of this.getCells()) {
+      cell.flagMine();
     }
   }
 
