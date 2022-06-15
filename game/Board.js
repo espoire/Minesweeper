@@ -14,6 +14,7 @@ export default class Board {
     this.height = height;
     this.mines = mines;
     this.clicked = 0;
+    this.flagged = 0;
 
     this.initializeBoard();
   }
@@ -58,7 +59,8 @@ export default class Board {
   getStatus() {
     const area = this.width * this.height;
     const unclicked = area - this.clicked;
-    const minesPerUnclicked = this.mines / unclicked;
+    const unclickedAndUnflagged = unclicked - this.flagged;
+    const minesPerUnclicked = (this.mines - this.flagged) / unclickedAndUnflagged;
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
     if (this.gameState === state.playing && unclicked === this.mines) {
@@ -69,11 +71,16 @@ export default class Board {
 
     return [
       `Board: ${this.width}x${this.height}`,
-      `Mines: ${this.mines} 💣`,
-      `Area: ${area} ⬜`,
+      `Area: ${area} 📐`,
+      `Clicked: ${this.clicked} 🔎`,
+      `Flagged: ${this.flagged} 🚩`,
       `Unclicked: ${unclicked} ⬜`,
-      `Average Chance of Mine in Random Cell: ${minesPerUnclickedPercent}% 💥`,
+      '',
+      `Mines: ${this.mines} 💣`,
+      `Flags remaining: ${this.mines - this.flagged} 🚩`,
       `Game State: ${this.gameState}`,
+      '',
+      `Average Chance of Mine in Random Unflagged Cell: ${minesPerUnclickedPercent}% 💥`,
     ].join('\n');
   }
 
@@ -82,7 +89,7 @@ export default class Board {
     if (!this.minesPlaced) this.placeMines(clicked);
 
     const cell = this.board[clicked.x][clicked.y];
-    if (cell.clicked) return;
+    if (cell.clicked || cell.flagged) return;
 
     this.clicked++;
     cell.click();
@@ -193,6 +200,20 @@ export default class Board {
     }
 
     return ret;
+  }
+
+  notifyFlag(delta) {
+    this.flagged += delta;
+
+    if(!this.hasFlagsRemaining()) {
+      // TODO
+    }
+    
+    this.updateStatus();
+  }
+
+  hasFlagsRemaining() {
+    return this.flagged < this.mines;
   }
 }
 
