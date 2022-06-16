@@ -1,0 +1,54 @@
+Features
+  Make board reveal BEFORE the lose message alert.
+  Board responsive
+  Color scheme generator https://coolors.co/
+  Comments!
+  Type information in JSDoc
+  Clean up unused library stuff
+    Make a libraries project!!
+
+HTML
+  Blank out the filler status text in the HTML
+  mixed tabs and spaces
+
+Board
+  this.clicked and this.flagged belong in initBoard()
+  initBoard maybe needs to be split into a reset()
+
+  click()
+    Pull game lose logic on click mine into Board
+  
+  getStatus()
+    Pop the math out of the string interpolation
+  
+  placeMines()
+    Missing semicolon - run linter!!
+  
+  getCells()
+    cache at construction time
+    Use it in getCandidateLocations() with a .filter() call
+
+Cell
+  Cell.text needs unifying
+  Cell click handlers should both go to the cell first, not the parent first
+    Cell.handleFlag should ONLY handle updating the UI
+    button.oncontextmenu should call parent.flag(), which then calls the Cell
+
+  createMineCellElements needs comments
+    Sort it, put all the button stuff together, all text stuff together, etc.
+
+  We need Board.onClick and Board.onContextMenu to be the event handlers, pass x,y
+    Interact with the Board only through Board methods
+    Control always flows User/UI --> Board --> Cell
+
+  toggleFlag
+    ! spacing
+    hasFlagsRemaining should just be getFlagCount()
+
+  ALL the UI changes code belongs in an updateUi(), which just reads the private vars
+
+  Scap Cell.revealed?
+
+  Figure out which methods can be private, and make them private
+
+  Rename cell.neighbors --> cell.neighboringMines to indicate it means mines
