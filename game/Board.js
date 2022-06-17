@@ -1,6 +1,6 @@
-import { array, arrShuffle } from "../util/Array.js";
-import { Point2D } from "../util/Util.js";
-import Cell from "./Cell.js";
+import {array, arrShuffle} from '../util/Array.js';
+import {Point2D} from '../util/Util.js';
+import Cell from './Cell.js';
 
 const state = {
   playing: 'Playing 🔎',
@@ -9,6 +9,11 @@ const state = {
 };
 
 export default class Board {
+  /**
+   * @param {number} width
+   * @param {number} height
+   * @param {number} mines
+   */
   constructor(width, height, mines) {
     this.width = width;
     this.height = height;
@@ -17,11 +22,13 @@ export default class Board {
     this.initialize();
   }
 
+  /** Performs first-time setup. */
   initialize() {
     this.board = array(this.width, this.height);
     this.reset();
   }
 
+  /** Resets the board to a fresh state. */
   reset() {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
@@ -36,9 +43,11 @@ export default class Board {
     this.gameState = state.playing;
   }
 
+  /**
+   * @param {HTMLTableElement} containerTableEl 
+   * @param {HTMLDivElement} statusTextEl 
+   */
   renderTo(containerTableEl, statusTextEl) {
-    console.log('Rendering to UI...');
-
     this.renderTargets = {
       board: containerTableEl,
       status: statusTextEl,
@@ -46,7 +55,7 @@ export default class Board {
 
     for (let y = 0; y < this.height; y++) {
       const rowEl = document.createElement('tr');
-    
+
       for (let x = 0; x < this.width; x++) {
         rowEl.appendChild(this.board[x][y].elements.td);
       }
@@ -57,10 +66,14 @@ export default class Board {
     this.updateStatus();
   }
 
+  /** Recalculates and applies any changes to the game status text UI. */
   updateStatus() {
     this.renderTargets.status.innerText = this.getStatus();
   }
 
+  /** Recalculates the game status text.
+   * @returns {string}
+   */
   getStatus() {
     const area = this.width * this.height;
     const unclicked = area - this.clicked;
@@ -69,11 +82,7 @@ export default class Board {
     const minesPerUnclicked = remainingFlags / unclickedAndUnflagged;
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
-    if (this.gameState === state.playing && unclicked === this.mines) {
-      setTimeout(() => alert('WIN 🎉'), 1);
-      this.gameState = state.win;
-      this.flagRemainingMines();
-    }
+    this.checkWin();
 
     return [
       `Board: ${this.width}x${this.height}`,
@@ -90,6 +99,9 @@ export default class Board {
     ].join('\n');
   }
 
+  /** Click handler. Clicks a cell. If it was a "zero", clicks all adjacent cells.
+   * @param {Point2D} clicked 
+   */
   click(clicked) {
     if (this.gameState !== state.playing) return;
     if (!this.minesPlaced) this.placeMines(clicked);
@@ -99,8 +111,11 @@ export default class Board {
 
     this.clicked++;
     cell.click();
-    
-    if (cell.mine) return this.explode();
+
+    if (cell.mine) {
+      this.explode();
+      return;
+    }
 
     if (cell.neighbors === 0) {
       for (const neighbor of this.getNeighbors(clicked)) {
@@ -111,25 +126,32 @@ export default class Board {
     this.updateStatus();
   }
 
+  /** Randomly places mines, avoiding the 9-neighborhood around the player's first click.
+   * @param {Point2D} initialClick 
+   */
   placeMines(initialClick) {
-    console.log(`First click, placing ${this.mines} mines 💣.`)
+    console.log(`First click, placing ${this.mines} mines 💣.`);
 
     const candidateLocations = arrShuffle(
-      this.getCandidateLocations(initialClick)
+        this.getCandidateLocations(initialClick),
     );
 
     for (let i = 0; i < this.mines; i++) {
       const location = candidateLocations[i];
       const cell = this.board[location.x][location.y];
-      
+
       cell.placeMine();
     }
 
     this.minesPlaced = true;
 
-    this.generateCellNeighborNumbers()
+    this.generateCellNeighborNumbers();
   }
 
+  /** Helper for Board.placeMines(). Generates a list of all valid cell locations.
+   * @param {Point2D} initialClick 
+   * @returns {Point2D[]}
+   */
   getCandidateLocations(initialClick) {
     const candidateLocations = [];
 
@@ -144,6 +166,7 @@ export default class Board {
     return candidateLocations;
   }
 
+  /** Counts and stores the number of adjacent (8-neighborhood) mines for each Cell. */
   generateCellNeighborNumbers() {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
@@ -151,7 +174,7 @@ export default class Board {
 
         const neighbors = this.getNeighbors(location);
         const mines = neighbors.filter(
-          loc => this.board[loc.x][loc.y].mine
+            (loc) => this.board[loc.x][loc.y].mine,
         ).length;
 
         const cell = this.board[x][y];
@@ -160,6 +183,10 @@ export default class Board {
     }
   }
 
+  /** Returns a list of all valid locations within this Board in the 8-neighborhood around a location.
+   * @param {Point2D} location 
+   * @returns {Point2D[]}
+   */
   getNeighbors(location) {
     const neighbors = [];
 
@@ -175,27 +202,51 @@ export default class Board {
     return neighbors;
   }
 
+  /** Lose the game. */
   explode() {
+    setTimeout(() => alert('BOOM 💥'), 1);
     this.gameState = state.lose;
-
-    alert("BOOM 💥");
-
     this.revealRemainingMines();
+
     this.updateStatus();
   }
 
+  /** Check if the game is won, and win if so. */
+  checkWin() {
+    if (this.gameState !== state.playing) return;
+
+    const area = this.width * this.height;
+    const unclicked = area - this.clicked;
+
+    if (unclicked === this.mines) {
+      this.win();
+    }
+  }
+
+  /** Win the game. */
+  win() {
+    setTimeout(() => alert('WIN 🎉'), 1);
+    this.gameState = state.win;
+    this.flagRemainingMines();
+  }
+
+  /** Board.explode() helper. Displays a 💣 on all cells which had mines. */
   revealRemainingMines() {
     for (const cell of this.getCells()) {
       cell.revealMine();
     }
   }
 
+  /** Board.win() helper. Displays a 🚩 on all cells which had mines. */
   flagRemainingMines() {
     for (const cell of this.getCells()) {
       cell.flagMine();
     }
   }
 
+  /** Get an iterable list of all Cells on this Board.
+   * @returns {Cell[]}
+   */
   getCells() {
     const ret = [];
 
@@ -208,16 +259,22 @@ export default class Board {
     return ret;
   }
 
+  /** Updates the number of placed flags.
+   * @param {number} delta The amount to change the flag count by.
+   */
   notifyFlag(delta) {
     this.flagged += delta;
 
-    if(!this.hasFlagsRemaining()) {
-      // TODO
+    if (!this.hasFlagsRemaining()) {
+      // TODO prompt player to auto-solve when all flags are placed.
     }
-    
+
     this.updateStatus();
   }
 
+  /**
+   * @returns {boolean} `true` if one or more flags remain, `false` otherwise.
+   */
   hasFlagsRemaining() {
     return this.flagged < this.mines;
   }
@@ -225,11 +282,11 @@ export default class Board {
 
 const eightNeighborhoodOffsets = [
   new Point2D(-1, -1),
-  new Point2D(-1,  0),
-  new Point2D(-1,  1),
+  new Point2D(-1, 0),
+  new Point2D(-1, 1),
   new Point2D( 0, -1),
-  new Point2D( 0,  1),
+  new Point2D( 0, 1),
   new Point2D( 1, -1),
-  new Point2D( 1,  0),
-  new Point2D( 1,  1),
-]
+  new Point2D( 1, 0),
+  new Point2D( 1, 1),
+];
