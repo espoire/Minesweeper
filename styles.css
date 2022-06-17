@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  background-color: navy;
+
+  color: white;
+  text-align: center;
+}
+
+#gameBoard {
+  border: 1px skyblue solid;
+  margin: auto;
+}
+
+.mineCell {
+  width: 40px;
+  height: 40px;
+}
+
+.mineCell > button {
+  width: 40px;
+  height: 40px;
+}
+
+.mineCell > span {
+  width: 40px;
+  height: 40px;
+  font-weight: bold;
+}
