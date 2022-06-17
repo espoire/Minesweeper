@@ -1,16 +1,12 @@
 Features
-  Make board reveal BEFORE the lose message alert.
   Board responsive
   Color scheme generator https://coolors.co/
+  Finish checking files with eslint
   Comments!
-  Type information in JSDoc
   Clean up unused library stuff
     Make a libraries project!!
 
 Board
-  placeMines()
-    Missing semicolon - run linter!!
-  
   getCells()
     cache at construction time
     Use it in getCandidateLocations() with a .filter() call
