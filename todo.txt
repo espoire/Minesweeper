@@ -8,9 +8,6 @@ Features
     Make a libraries project!!
 
 Board
-  click()
-    Pull game lose logic on click mine into Board
-  
   getStatus()
     Pop the math out of the string interpolation
   

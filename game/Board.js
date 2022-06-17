@@ -99,7 +99,7 @@ export default class Board {
     this.clicked++;
     cell.click();
     
-    if (this.gameState !== state.playing) return;
+    if (cell.mine) return this.explode();
 
     if (cell.neighbors === 0) {
       for (const neighbor of this.getNeighbors(clicked)) {

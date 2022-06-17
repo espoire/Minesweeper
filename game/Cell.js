@@ -32,11 +32,10 @@ export default class Cell {
   click() {
     this.elements.button.style.display = 'none';
     this.elements.text.style.display = null;
-
     this.clicked = true;
+
     if (this.mine) {
       this.elements.text.innerText = '💥';
-      this.parent.explode();
     }
   }
 
