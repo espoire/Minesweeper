@@ -8,9 +8,6 @@ Features
     Make a libraries project!!
 
 Board
-  getStatus()
-    Pop the math out of the string interpolation
-  
   placeMines()
     Missing semicolon - run linter!!
   

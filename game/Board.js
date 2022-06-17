@@ -64,8 +64,9 @@ export default class Board {
   getStatus() {
     const area = this.width * this.height;
     const unclicked = area - this.clicked;
+    const remainingFlags = this.mines - this.flagged;
     const unclickedAndUnflagged = unclicked - this.flagged;
-    const minesPerUnclicked = (this.mines - this.flagged) / unclickedAndUnflagged;
+    const minesPerUnclicked = remainingFlags / unclickedAndUnflagged;
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
     if (this.gameState === state.playing && unclicked === this.mines) {
@@ -82,7 +83,7 @@ export default class Board {
       `Unclicked: ${unclicked} ⬜`,
       '',
       `Mines: ${this.mines} 💣`,
-      `Flags remaining: ${this.mines - this.flagged} 🚩`,
+      `Flags remaining: ${remainingFlags} 🚩`,
       `Game State: ${this.gameState}`,
       '',
       `Average Chance of Mine in Random Unflagged Cell: ${minesPerUnclickedPercent}% 💥`,
