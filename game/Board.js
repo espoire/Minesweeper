@@ -13,20 +13,25 @@ export default class Board {
     this.width = width;
     this.height = height;
     this.mines = mines;
-    this.clicked = 0;
-    this.flagged = 0;
 
-    this.initializeBoard();
+    this.initialize();
   }
 
-  initializeBoard() {
-    this.board = array(this.width, this.height);;
+  initialize() {
+    this.board = array(this.width, this.height);
+    this.reset();
+  }
 
+  reset() {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         this.board[x][y] = new Cell(this, x, y);
       }
     }
+
+    this.minesPlaced = false;
+    this.clicked = 0;
+    this.flagged = 0;
 
     this.gameState = state.playing;
   }

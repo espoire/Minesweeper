@@ -8,9 +8,6 @@ Features
     Make a libraries project!!
 
 Board
-  this.clicked and this.flagged belong in initBoard()
-  initBoard maybe needs to be split into a reset()
-
   click()
     Pull game lose logic on click mine into Board
   
