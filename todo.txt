@@ -7,10 +7,6 @@ Features
   Clean up unused library stuff
     Make a libraries project!!
 
-HTML
-  Blank out the filler status text in the HTML
-  mixed tabs and spaces
-
 Board
   this.clicked and this.flagged belong in initBoard()
   initBoard maybe needs to be split into a reset()
