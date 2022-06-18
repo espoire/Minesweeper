@@ -8,21 +8,16 @@ body {
 
 #gameBoard {
   border: 1px skyblue solid;
-  margin: auto;
-}
+  border-collapse: collapse;
 
-.mineCell {
-  width: 40px;
-  height: 40px;
-}
-
-.mineCell > button {
-  width: 40px;
-  height: 40px;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .mineCell > span {
-  width: 40px;
-  height: 40px;
   font-weight: bold;
 }

@@ -1,5 +1,6 @@
 import Settings from '../Settings.js';
 import {array, arrShuffle} from '../util/Array.js';
+import CSS from '../util/CSS.js';
 import {Point2D} from '../util/Util.js';
 import Cell from './Cell.js';
 
@@ -67,6 +68,29 @@ export default class Board {
     }
 
     this.updateStatus();
+  }
+
+  setContainerSize(containerWidth, containerHeight) {
+    const borderThickness = 5;
+
+    const innerWidth = containerWidth - borderThickness * 2;
+    const innerHeight = containerHeight - borderThickness * 2;
+
+    const maxCellWidth = innerWidth / this.width;
+    const maxCellHeight = innerHeight / this.height;
+    const cellSize = Math.floor(Math.min(maxCellWidth, maxCellHeight));
+
+    CSS.updateRule('.mineCell', `{
+      width: ${cellSize}px;
+      height: ${cellSize}px;
+      overflow: hidden;
+      padding: 0;
+    }`);
+    
+    CSS.updateRule('.mineCell > button', `{
+      width: ${cellSize}px;
+      height: ${cellSize - 1}px;
+    }`);
   }
 
   /** Recalculates and applies any changes to the game status text UI. */
