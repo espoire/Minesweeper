@@ -1,4 +1,8 @@
 const CSS = {
+  /** 
+   * @returns {CSSRule[]}
+   *    All available CSSRules across the entire document.
+   */
   getAllCssRules() {
     const ret = [];
 
@@ -11,6 +15,12 @@ const CSS = {
     return ret;
   },
 
+  /** Removes all CSSRules with the given selectorText (exact match),
+   * and then inserts a new rule with the given selectorText and ruleBody.
+   * 
+   * @param {string} selectorText 
+   * @param {string} newRuleBody 
+   */
   updateRule(selectorText, newRuleBody) {
     CSS.getAllCssRules().filter((rule) =>
       rule.selectorText === selectorText
@@ -21,6 +31,9 @@ const CSS = {
     document.styleSheets[0].insertRule(`${selectorText} ${newRuleBody}`);
   },
 
+  /** Removes the given CSSRule from its parent CSSStyleSheet.
+   * @param {CSSRule} rule
+   */
   removeRule(rule) {
     const sheet = rule.parentStyleSheet;
 
