@@ -6,11 +6,6 @@ Features
   Clean up unused library stuff
     Make a libraries project!!
 
-Board
-  getCells()
-    cache at construction time
-    Use it in getCandidateLocations() with a .filter() call
-
 Cell
   Cell.text needs unifying
   Cell click handlers should both go to the cell first, not the parent first

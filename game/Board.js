@@ -25,6 +25,8 @@ export default class Board {
   /** Performs first-time setup. */
   initialize() {
     this.board = array(this.width, this.height);
+    this.cells = array(this.width * this.height);
+
     this.reset();
   }
 
@@ -32,7 +34,7 @@ export default class Board {
   reset() {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
-        this.board[x][y] = new Cell(this, x, y);
+        this.cells[this.height * x + y] = this.board[x][y] = new Cell(this, x, y);
       }
     }
 
@@ -118,7 +120,7 @@ export default class Board {
     }
 
     if (cell.neighbors === 0) {
-      for (const neighbor of this.getNeighbors(clicked)) {
+      for (const neighbor of this.getNeighbors(clicked, eightNeighborhoodOffsets)) {
         this.click(neighbor);
       }
     }
@@ -130,18 +132,11 @@ export default class Board {
    * @param {Point2D} initialClick 
    */
   placeMines(initialClick) {
-    console.log(`First click, placing ${this.mines} mines 💣.`);
-
-    const candidateLocations = arrShuffle(
-        this.getCandidateLocations(initialClick),
+    arrShuffle(
+      this.getCandidateLocations(initialClick),
+    ).slice(0, this.mines).forEach((cell) =>
+      cell.placeMine()
     );
-
-    for (let i = 0; i < this.mines; i++) {
-      const location = candidateLocations[i];
-      const cell = this.board[location.x][location.y];
-
-      cell.placeMine();
-    }
 
     this.minesPlaced = true;
 
@@ -150,20 +145,19 @@ export default class Board {
 
   /** Helper for Board.placeMines(). Generates a list of all valid cell locations.
    * @param {Point2D} initialClick 
-   * @returns {Point2D[]}
+   * @returns {Cell[]}
    */
   getCandidateLocations(initialClick) {
-    const candidateLocations = [];
+    const clickNeighbors = this.getNeighbors(
+      initialClick,
+      nineNeighborhoodOffsets
+    ).map((loc) =>
+      this.board[loc.x][loc.y]
+    );
 
-    for (let x = 0; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
-        if (x < initialClick.x - 1 || x > initialClick.x + 1 || y < initialClick.y - 1 || y > initialClick.y + 1) {
-          candidateLocations.push(new Point2D(x, y));
-        }
-      }
-    }
-
-    return candidateLocations;
+    return this.cells.filter((cell) =>
+      ! clickNeighbors.includes(cell)
+    );
   }
 
   /** Counts and stores the number of adjacent (8-neighborhood) mines for each Cell. */
@@ -172,9 +166,9 @@ export default class Board {
       for (let y = 0; y < this.height; y++) {
         const location = new Point2D(x, y);
 
-        const neighbors = this.getNeighbors(location);
+        const neighbors = this.getNeighbors(location, eightNeighborhoodOffsets);
         const mines = neighbors.filter(
-            (loc) => this.board[loc.x][loc.y].mine,
+          (loc) => this.board[loc.x][loc.y].mine,
         ).length;
 
         const cell = this.board[x][y];
@@ -184,22 +178,17 @@ export default class Board {
   }
 
   /** Returns a list of all valid locations within this Board in the 8-neighborhood around a location.
-   * @param {Point2D} location 
+   * @param {Point2D} location
+   * @param {Point2D[]} offsets
    * @returns {Point2D[]}
    */
-  getNeighbors(location) {
-    const neighbors = [];
-
-    for (const offset of eightNeighborhoodOffsets) {
-      const candidateNeighbor = location.add(offset);
-
-      if (0 <= candidateNeighbor.x && candidateNeighbor.x < this.width &&
-          0 <= candidateNeighbor.y && candidateNeighbor.y < this.height) {
-        neighbors.push(candidateNeighbor);
-      }
-    }
-
-    return neighbors;
+  getNeighbors(location, offsets) {
+    return offsets.map((offset) =>
+      location.add(offset)
+    ).filter((loc) =>
+      0 <= loc.x && loc.x < this.width &&
+      0 <= loc.y && loc.y < this.height
+    );
   }
 
   /** Lose the game. */
@@ -232,31 +221,16 @@ export default class Board {
 
   /** Board.explode() helper. Displays a 💣 on all cells which had mines. */
   revealRemainingMines() {
-    for (const cell of this.getCells()) {
+    for (const cell of this.cells) {
       cell.revealMine();
     }
   }
 
   /** Board.win() helper. Displays a 🚩 on all cells which had mines. */
   flagRemainingMines() {
-    for (const cell of this.getCells()) {
+    for (const cell of this.cells) {
       cell.flagMine();
     }
-  }
-
-  /** Get an iterable list of all Cells on this Board.
-   * @returns {Cell[]}
-   */
-  getCells() {
-    const ret = [];
-
-    for (let x = 0; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
-        ret.push(this.board[x][y]);
-      }
-    }
-
-    return ret;
   }
 
   /** Updates the number of placed flags.
@@ -289,4 +263,9 @@ const eightNeighborhoodOffsets = [
   new Point2D( 1, -1),
   new Point2D( 1, 0),
   new Point2D( 1, 1),
+];
+
+const nineNeighborhoodOffsets = [
+  ...eightNeighborhoodOffsets,
+  new Point2D(0, 0),
 ];
