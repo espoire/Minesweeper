@@ -8,12 +8,16 @@ export default class Cell {
    * @param {number} y 
    */
   constructor(parent, x, y) {
+    this.parent = parent;
+
     this.mine = false;
+
     this.clicked = false;
     this.flagged = false;
+
     this.text = null;
     this.revealed = false;
-    this.parent = parent;
+
     this.elements = createMineCellElements(parent, this, x, y);
   }
 
@@ -100,26 +104,26 @@ export default class Cell {
  * }}
  */
 function createMineCellElements(parent, cell, x, y) {
+  // Create wrapper table cell element.
   const td = document.createElement('td');
   td.classList.add('mineCell');
 
+  // Create button element, used until the Cell is clicked.
   const button = document.createElement('button');
-  const text = document.createElement('span');
-
-  text.style.display = 'none';
-
   button.onclick = function () {
     if (cell.flagged) return;
     parent.click(new Point2D(x, y));
   }
-
   button.oncontextmenu = function () {
     cell.toggleFlag();
 
     return false; // Suppress default right-click behavior
   }
-
   td.appendChild(button);
+
+  // Create text element, used after the Cell is clicked.
+  const text = document.createElement('span');
+  text.style.display = 'none';
   td.appendChild(text);
 
   return {td, button, text};
