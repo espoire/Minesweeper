@@ -1,13 +1,16 @@
 body {
   margin: 0;
-  background-color: navy;
-  color: white;
+  background-color: #040;
+  color: #8f8;
   
   text-align: center;
 }
 
+button {
+  background-color: #6f6;
+}
+
 #gameBoard {
-  border: 1px skyblue solid;
   border-collapse: collapse;
 
   /* center */
@@ -17,6 +20,12 @@ body {
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+
+  /* no highlight */
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 
 .mineCell {

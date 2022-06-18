@@ -80,6 +80,9 @@ export default class Board {
     const maxCellHeight = innerHeight / this.height;
     const cellSize = Math.floor(Math.min(maxCellWidth, maxCellHeight));
 
+    const fontSize = Math.floor((cellSize - 5) * 2/3);
+    const buttonFontSize = Math.floor(fontSize * 2/3);
+
     CSS.updateRule('.mineCell > div', `{
       width: ${cellSize}px;
       height: ${cellSize}px;
@@ -88,11 +91,15 @@ export default class Board {
     
     CSS.updateRule('.mineCell > div > button', `{
       width: ${cellSize}px;
-      height: ${cellSize - 1}px;
+      height: ${cellSize}px;
+      font-size: ${buttonFontSize}pt;
+      padding: 0;
+      border-radius: 5px;
     }`);
 
     CSS.updateRule('.mineCell > div > span', `{
       line-height: ${cellSize}px;
+      font-size: ${fontSize}pt;
       font-weight: bold;
     }`);
   }
