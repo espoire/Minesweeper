@@ -1,150 +1,80 @@
-import { padStringLeft } from "./Util.js";
-import { randInt } from "./Random.js";
-
-const sortFunctions = {
-    numeric(a, b) { return a - b; },
-    reverseNumeric(a, b) { return b - a; }
-};
-
-/** Returns a new array containing the argument, or a clone of
- * the argument if it was already an array.
- * 
- * @param {any} maybeArray 
- * @returns {any[]}
- */
-export function ensureArray(maybeArray) {
-    if(maybeArray === null || maybeArray == undefined) return [];
-    if(Array.isArray(maybeArray)) return [...maybeArray];
-    return [maybeArray];
-}
+import { randInt } from './Random.js';
 
 /** Creates a new blank array with the specified dimension(s).
  * 
- * @param {...number} length 
+ * @param {...number} dimensions 
  * @returns {Array}
  */
-export function array(length) {
-    const arr = new Array(length || 0);
+export function array(...dimensions) {
+  // Create a blank array with the first argument as its size.
+  const arr = new Array(dimensions[0] || 0);
 
-    if (arguments.length > 1) {
-        const args = Array.prototype.slice.call(arguments, 1);
+  // If any arguments remain,
+  if (dimensions.length > 1) {
+    const args = dimensions.slice(1);
 
-        let i = length;
-        while(i--)
-            arr[length-1 - i] = array.apply(this, args);
+    // Loop over the slots in the current array...
+    let i = dimensions[0];
+    while (i--) {
+
+      // ...and fill them with new arrays via recursive
+      //    funtion call over the remaining arguments.
+      arr[i] = array(args);
     }
+  }
 
-    return arr;
+  return arr;
 }
 
-/** Resets all members of a multidimensional array to the provided value.
- * (If that value is an object, all references will point to the SAME object.)
+/** Array Remove - By John Resig (MIT Licensed)
+ * Removes elements from an array.
  * 
- * @param {any[]} arr
- * @param {any} value
- */
-export function fill(arr, value) {
-    for(let i = 0; i < arr.length; i++) {
-        if(Array.isArray(arr[i])) {
-            fill(arr[i], value);
-        } else {
-            arr[i] = value;
-        }
-    }
-
-    return arr;
-}
-
-export const prettyPrint2DRectArray = (function () {
-    function toString(value, printAsBlank) {
-        if(value === null || value === undefined) return " ";
-        if(printAsBlank.includes(value)) return " ";
-
-        try {
-            return value.toString();
-        } catch {
-            return value + "";
-        }
-    }
-
-    return function prettyPrint2DRectArray(array, ...printAsBlank) {
-        let longest = 0;
-        for(let x = 0; x < array.length; x++) {
-            for(let y = 0; y < array[x].length; y++) {
-                const stringOf = toString(array[x][y], printAsBlank);
-                if(stringOf.length > longest) longest = stringOf.length;
-            }
-        }
-    
-        let prettyPrint = "";
-        let x = 0;
-        for(let y = array[x].length - 1; y >= 0; y--) {
-            for(let x = 0; x < array.length; x++)
-                prettyPrint += padStringLeft(toString(array[x][y], printAsBlank), longest) + " ";
-            prettyPrint += "\n";
-        }
-        console.log(prettyPrint);
-    }
-})();
-
-/** Removes zero or more items from an array by index.
- * 
- * @param {Array} array 
- * @param  {...number} indexes
- * @returns {Array} Array containing the removed items.
- */
-export function removeMultipleIndexes(array, ...indexes) {
-    let ret = [];
-
-    indexes.sort(sortFunctions.reverseNumeric);
-
-    for(const index of indexes)
-        ret.push(array.splice(index, 1)[0]);
-    
-    return ret;
-}
-
-/** Returns a new array containing the non-null elements
- * of the target array, even if it is sparse.
- * 
- * @param {Array} array 
+ * @param {number} from 
+ * @param {number} to 
  * @returns {Array}
  */
-export function compactSparseArray(array) {
-    return array.filter(function (x) {
-        return x != null;
-    });
-}
-
-// Array Remove - By John Resig (MIT Licensed)
-// Removes elements from an array.
 Array.prototype.remove = function(from, to) {
-    var rest = this.slice((to || from) + 1 || this.length);
-    this.length = from < 0 ? this.length + from : from;
-    return this.push(...rest);
+  const rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push(...rest);
 };
 
-// popRandomArrayElement - Returns a random element from a provided array,
-//   removing the selected element in the process.
-//
-// Arguments
-//   inArray - array, the array to pick from.
-//   randomFunc (optional) - RNG function to use. Defaults to Math.random.
+/** Returns a random element from a provided array,
+ * removing the selected element in the process.
+ * 
+ * @param {Array} inArray
+ * @param {function} [randomFunc]
+ *    RNG function to use. Defaults to Math.random.
+ * @returns {*}
+ */
 export function popRandomArrayElement(inArray, randomFunc) {
-    var slot = randInt(0, inArray.length - 1, randomFunc);
-    var ret = inArray[slot];
-    inArray.remove(slot);
-    return ret;
+  const slot = randInt(0, inArray.length - 1, randomFunc);
+
+  const ret = inArray[slot];
+  inArray.remove(slot);
+
+  return ret;
 }
 
-// arrShuffle - Returns a shallow copy of the input array in randomized order.
+/** Returns a shallow copy of the input array in randomized order.
+ * 
+ * @param {Array} array 
+ * @param {function} [randomFunc]
+ *    RNG function to use. Defaults to Math.random.
+ * @returns {Array}
+ */
 export function arrShuffle(array, randomFunc) {
-    array = [...array];
-    const ret = [];
+  // Take a shallow copy of the input array so we're safe to mutate it.
+  array = [...array];
 
-    while (array.length > 0) {
-        ret.push(popRandomArrayElement(array, randomFunc));
-    }
+  const ret = [];
 
-    return ret;
+  // Draw random elements from the copy input array until there are no more.
+  while (array.length > 0) {
+    ret.push(
+      popRandomArrayElement(array, randomFunc)
+    );
+  }
+
+  return ret;
 }

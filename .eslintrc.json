@@ -43,6 +43,11 @@
       "functions": "only-multiline"
     }],
     "indent": ["error", 2],
-    "object-curly-spacing": 0,
+    "object-curly-spacing": "off",
+    "padded-blocks": "off",
+    "eol-last": ["warn", "never"],
+
+    // It's a hobby project and I do what I want.
+    "no-extend-native": "off"
   }
 }
