@@ -1,4 +1,7 @@
 const Settings = {
+  features: {
+    showStatusText: false,
+  },
   debug: {
     showMines: false,
   },

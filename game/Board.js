@@ -1,3 +1,4 @@
+import Settings from '../Settings.js';
 import {array, arrShuffle} from '../util/Array.js';
 import {Point2D} from '../util/Util.js';
 import Cell from './Cell.js';
@@ -70,7 +71,11 @@ export default class Board {
 
   /** Recalculates and applies any changes to the game status text UI. */
   updateStatus() {
-    this.renderTargets.status.innerText = this.getStatus();
+    this.checkWin();
+
+    if (Settings.features.showStatusText) {
+      this.renderTargets.status.innerText = this.getStatus();
+    }
   }
 
   /** Recalculates the game status text.
@@ -83,8 +88,6 @@ export default class Board {
     const unclickedAndUnflagged = unclicked - this.flagged;
     const minesPerUnclicked = remainingFlags / unclickedAndUnflagged;
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
-
-    this.checkWin();
 
     return [
       `Board: ${this.width}x${this.height}`,
