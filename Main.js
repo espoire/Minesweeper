@@ -1,7 +1,6 @@
 import Board from "./game/Board.js";
 
-// const game = new Board(8, 8, 10);
-const game = new Board(15, 15, 35);
+const game = new Board(12, 12, 25);
 
 window.onresize = function () {
   game.setContainerSize(window.innerWidth, window.innerHeight);

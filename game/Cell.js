@@ -23,6 +23,7 @@ export default class Cell {
     /** Object containing the HTML elements used for rendering.
      * @type {{
      *   td: HTMLTableCellElement,
+     *   divWrapper: HTMLDivElement,
      *   button: HTMLButtonElement,
      *   text: HTMLSpanElement,
      * }}
@@ -77,14 +78,19 @@ export default class Cell {
  * @param {number} y 
  * @returns {{
  *   td: HTMLTableCellElement,
+ *   divWrapper: HTMLDivElement,
  *   button: HTMLButtonElement,
  *   text: HTMLSpanElement,
  * }}
  */
 function createMineCellElements(parent, cell, x, y) {
-  // Create wrapper table cell element.
+  // Create table cell element.
   const td = document.createElement('td');
   td.classList.add('mineCell');
+
+  // Create wrapper div element.
+  const div = document.createElement('div');
+  td.appendChild(div);
 
   // Create button element, used until the Cell is clicked.
   const button = document.createElement('button');
@@ -95,14 +101,15 @@ function createMineCellElements(parent, cell, x, y) {
     parent.toggleFlag(new Point2D(x, y))
     return false; // Suppress default right-click behavior
   }
-  td.appendChild(button);
+  div.appendChild(button);
 
   // Create text element, used after the Cell is clicked.
   const text = document.createElement('span');
+  td.classList.add('center');
   text.style.display = 'none';
-  td.appendChild(text);
+  div.appendChild(text);
 
-  return {td, button, text};
+  return {td, div, button, text};
 }
 
 /** Update the UI based on the Cell's state.

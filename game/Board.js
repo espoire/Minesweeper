@@ -80,16 +80,20 @@ export default class Board {
     const maxCellHeight = innerHeight / this.height;
     const cellSize = Math.floor(Math.min(maxCellWidth, maxCellHeight));
 
-    CSS.updateRule('.mineCell', `{
+    CSS.updateRule('.mineCell > div', `{
       width: ${cellSize}px;
       height: ${cellSize}px;
       overflow: hidden;
-      padding: 0;
     }`);
     
-    CSS.updateRule('.mineCell > button', `{
+    CSS.updateRule('.mineCell > div > button', `{
       width: ${cellSize}px;
       height: ${cellSize - 1}px;
+    }`);
+
+    CSS.updateRule('.mineCell > div > span', `{
+      line-height: ${cellSize}px;
+      font-weight: bold;
     }`);
   }
 
