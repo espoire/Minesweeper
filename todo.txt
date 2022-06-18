@@ -12,17 +12,6 @@ Cell
     Cell.handleFlag should ONLY handle updating the UI
     button.oncontextmenu should call parent.flag(), which then calls the Cell
 
-  createMineCellElements needs comments
-    Sort it, put all the button stuff together, all text stuff together, etc.
-
-  We need Board.onClick and Board.onContextMenu to be the event handlers, pass x,y
-    Interact with the Board only through Board methods
-    Control always flows User/UI --> Board --> Cell
-
-  toggleFlag
-    ! spacing
-    hasFlagsRemaining should just be getFlagCount()
-
   ALL the UI changes code belongs in an updateUi(), which just reads the private vars
 
   Scap Cell.revealed?

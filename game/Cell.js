@@ -57,13 +57,8 @@ export default class Cell {
   }
 
   /** TODO: Update the UI to hide/show a flag on this Cell. */
-  toggleFlag() {
-    if (! this.flagged && !this.parent.hasFlagsRemaining()) {
-      alert('Out of flags...');
-      return;
-    }
-
-    this.flagged = ! this.flagged;
+  toggleFlagged() {
+    this.flagged = !this.flagged;
 
     if (this.flagged) {
       this.elements.button.innerText = '🚩';
@@ -74,8 +69,6 @@ export default class Cell {
         this.elements.button.innerText = '';
       }
     }
-
-    this.parent.notifyFlag(this.flagged ? 1 : -1);
   }
 
   /** Update the UI to show if there was a mine hiding behind this Cell. */
@@ -111,12 +104,10 @@ function createMineCellElements(parent, cell, x, y) {
   // Create button element, used until the Cell is clicked.
   const button = document.createElement('button');
   button.onclick = function () {
-    if (cell.flagged) return;
     parent.click(new Point2D(x, y));
   }
   button.oncontextmenu = function () {
-    cell.toggleFlag();
-
+    parent.toggleFlag(new Point2D(x, y))
     return false; // Suppress default right-click behavior
   }
   td.appendChild(button);
