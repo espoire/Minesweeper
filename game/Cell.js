@@ -8,79 +8,64 @@ export default class Cell {
    * @param {number} y 
    */
   constructor(parent, x, y) {
-    this.parent = parent;
-
+    /** @type {boolean} If true, this cell contains a mine. */
     this.mine = false;
+    /** @type {number | null} The number of adjacent cells which contain a mine. */
+    this.neighborMinesCount = null;
 
+    /** @type {boolean} If true, hides the button and shows what was behind the cell. */
     this.clicked = false;
+    /** @type {boolean} If true, displays a flag on the button. */
     this.flagged = false;
-
-    this.text = null;
+    /** @type {boolean} If true, shows mines even if unclicked. */
     this.revealed = false;
 
+    /** Object containing the HTML elements used for rendering.
+     * @type {{
+     *   td: HTMLTableCellElement,
+     *   button: HTMLButtonElement,
+     *   text: HTMLSpanElement,
+     * }}
+     */
     this.elements = createMineCellElements(parent, this, x, y);
   }
 
-  /** Permanently alters this Cell to include a mine. */
+  /** Update the UI to place a mine in this cell. (Not visible unless revealed by settings.) */
   placeMine() {
     this.mine = true;
-    this.setText('💣');
-    if (Settings.debug.showMines) this.revealMine();
-  }
-
-  /** TODO
-   * @param {string} text 
-   */
-  setText(text) {
-    this.text = text;
-    this.elements.text.innerText = text;
-    if (this.revealed) this.elements.button.innerText = text;
+    redraw(this);
   }
 
   /** Records the number of neighbor mines.
    * @param {number} mines 
    */
   setNeighborMineCount(mines) {
-    this.neighbors = mines;
-    if (!this.mine && mines > 0) this.setText(mines);
+    this.neighborMinesCount = mines;
+    redraw(this);
   }
 
-  /** TODO */
+  /** Update the UI to reveal what was behind this cell. */
   click() {
-    this.elements.button.style.display = 'none';
-    this.elements.text.style.display = null;
     this.clicked = true;
-
-    if (this.mine) {
-      this.elements.text.innerText = '💥';
-    }
+    redraw(this);
   }
 
-  /** TODO: Update the UI to hide/show a flag on this Cell. */
+  /** Update the UI to hide/show a flag on this cell. */
   toggleFlagged() {
     this.flagged = !this.flagged;
-
-    if (this.flagged) {
-      this.elements.button.innerText = '🚩';
-    } else {
-      if (this.mine && Settings.debug.showMines) {
-        this.revealMine();
-      } else {
-        this.elements.button.innerText = '';
-      }
-    }
+    redraw(this);
   }
 
-  /** Update the UI to show if there was a mine hiding behind this Cell. */
+  /** Update the UI at the end of a lost game to show if there was a mine hiding behind this Cell. */
   revealMine() {
     this.revealed = true;
-    if (this.mine) this.elements.button.innerText = '💣';
+    redraw(this);
   }
 
-  /** Update the UI to show a flag on this Cell if it's hiding a mine. */
-  flagMine() {
-    this.revealed = true;
-    if (this.mine) this.elements.button.innerText = '🚩';
+  /** Update the UI at the end of a won game to show a flag on this Cell if it's hiding a mine. */
+  revealMineAsFlag() {
+    this.flagged = true;
+    redraw(this);
   }
 }
 
@@ -118,4 +103,44 @@ function createMineCellElements(parent, cell, x, y) {
   td.appendChild(text);
 
   return {td, button, text};
+}
+
+/** Update the UI based on the Cell's state.
+ * @param {Cell} cell 
+ */
+function redraw(cell) {
+  if (cell.clicked) {
+    // Hide button, show text.
+    cell.elements.button.style.display = 'none';
+    cell.elements.text.style.display = null;
+
+    // If exploded, show an explosion.
+    if (cell.mine) {
+      cell.elements.text.innerText = '💥';
+
+    // Otherwise show the neighbor mines count.
+    } else {
+      cell.elements.text.innerText = cell.neighborMinesCount || '';
+    }
+
+  } else { // Cell is "unclicked".
+    // Hide text, show button.
+    cell.elements.button.style.display = null;
+    cell.elements.text.style.display = 'none';
+
+    // If flagged, show a flag.
+    if (cell.flagged) {
+      cell.elements.button.innerText = '🚩';
+    } else {
+
+      // If it has a mine and is revealed, show a mine.
+      if (cell.mine && (cell.revealed || Settings.debug.showMines)) {
+        cell.elements.button.innerText = '💣';
+      
+      // Otherwise show nothing.
+      } else {
+        cell.elements.button.innerText = '';
+      }
+    }
+  }
 }

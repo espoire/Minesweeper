@@ -5,17 +5,3 @@ Features
   Comments!
   Clean up unused library stuff
     Make a libraries project!!
-
-Cell
-  Cell.text needs unifying
-  Cell click handlers should both go to the cell first, not the parent first
-    Cell.handleFlag should ONLY handle updating the UI
-    button.oncontextmenu should call parent.flag(), which then calls the Cell
-
-  ALL the UI changes code belongs in an updateUi(), which just reads the private vars
-
-  Scap Cell.revealed?
-
-  Figure out which methods can be private, and make them private
-
-  Rename cell.neighbors --> cell.neighboringMines to indicate it means mines

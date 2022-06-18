@@ -119,7 +119,7 @@ export default class Board {
       return;
     }
 
-    if (cell.neighbors === 0) {
+    if (cell.neighborMinesCount === 0) {
       for (const neighbor of this.getNeighbors(clickLocation, eightNeighborhoodOffsets)) {
         this.click(neighbor, true);
       }
@@ -260,7 +260,7 @@ export default class Board {
   /** Board.win() helper. Displays a 🚩 on all cells which had mines. */
   flagRemainingMines() {
     for (const cell of this.cells) {
-      cell.flagMine();
+      cell.revealMineAsFlag();
     }
   }
 
