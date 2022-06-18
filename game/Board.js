@@ -125,17 +125,18 @@ export default class Board {
     const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
     return [
-      `Board: ${this.width}x${this.height}`,
-      `Area: ${area} 📐`,
-      `Clicked: ${this.clicked} 🔎`,
-      `Flagged: ${this.flagged} 🚩`,
-      `Unclicked: ${unclicked} ⬜`,
-      '',
-      `Mines: ${this.mines} 💣`,
-      `Flags remaining: ${remainingFlags} 🚩`,
-      `Game State: ${this.gameState}`,
-      '',
-      `Average Chance of Mine in Random Unflagged Cell: ${minesPerUnclickedPercent}% 💥`,
+      `${this.mines} 💣    ${remainingFlags} 🚩`,
+      // `Board: ${this.width}x${this.height}`,
+      // `Area: ${area} 📐`,
+      // `Clicked: ${this.clicked} 🔎`,
+      // `Flagged: ${this.flagged} 🚩`,
+      // `Unclicked: ${unclicked} ⬜`,
+      // '',
+      // `Mines: ${this.mines} 💣`,
+      // `Flags remaining: ${remainingFlags} 🚩`,
+      // `Game State: ${this.gameState}`,
+      // '',
+      // `Average Chance of Mine in Random Unflagged Cell: ${minesPerUnclickedPercent}% 💥`,
     ].join('\n');
   }
 

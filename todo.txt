@@ -1,7 +1,4 @@
 Features
-  Bring status indicators back
-    Bomb Count
-    Flags Remaining Count
   Color scheme generator https://coolors.co/
   Animations:
     Reset - Broom or similar sweeps across
