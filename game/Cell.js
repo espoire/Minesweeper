@@ -3,9 +3,9 @@ import { Point2D } from "../util/Util.js";
 
 export default class Cell {
   /**
-   * @param {Board} parent 
-   * @param {number} x 
-   * @param {number} y 
+   * @param {Board} parent
+   * @param {number} x
+   * @param {number} y
    */
   constructor(parent, x, y) {
     /** @type {boolean} If true, this cell contains a mine. */
