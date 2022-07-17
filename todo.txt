@@ -1,3 +1,7 @@
+Write-up
+  Do a nice eassy and interactive demo page, explaining the game, its basics,
+    and how the first-order inference logic works.
+
 Features
   Algorithmic help mode
     ✔ First order inferences
