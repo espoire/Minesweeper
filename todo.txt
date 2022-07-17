@@ -1,6 +1,15 @@
 Features
   Algorithmic help mode
-    Auto-play the first-order inferences
+    ✔ First order inferences
+    Second order inferences
+      Example:
+        F 3 1
+        ? ? ?
+      From the 1, we know that exactly one of (1, 1) or (2, 1) contains a mine.
+      From the 3, we know that exactly two of (0, 1), (1, 1) and (2, 1) contain mines.
+      Combining these facts, we can infer that (0, 1) must be a mine.
+    Deep inference
+      Enumerate all possible board states, track probabilities
 
   Status text should update when game wins/loses
   
