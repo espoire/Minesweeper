@@ -1,12 +1,23 @@
+/** Adds spaces to the front of the given string
+ * if it is shorter than the given length.
+ * 
+ * @param {string} string 
+ * @param {number} length 
+ * @returns {string}
+ */
 export function padStringLeft(string, length) {
-  while(string.length < length) string = " " + string;
+  while (string.length < length) string = ` ${string}`;
   return string;
 }
 
 export class Point2D {
+  /**
+   * @param {number} x 
+   * @param {number} y 
+   */
   constructor(x, y) {
-    if(typeof x !== 'number') throw new Error("Cannot create Point2D with non-number x-coordinate: ", x);
-    if(typeof y !== 'number') throw new Error("Cannot create Point2D with non-number y-coordinate: ", y);
+    if (typeof x !== 'number') throw new Error('Cannot create Point2D with non-number x-coordinate: ', x);
+    if (typeof y !== 'number') throw new Error('Cannot create Point2D with non-number y-coordinate: ', y);
 
     this.x = x;
     this.y = y;
@@ -33,7 +44,7 @@ export class Point2D {
    * @returns {string}
    */
   toIdString() {
-    return "[Point2D: " + this.x + "," + this.y + "]";
+    return `[Point2D: ${this.x},${this.y}]`;
   }
 
   /**

@@ -1,9 +1,15 @@
 Features
+  Algorithmic help mode
+    Auto-play the first-order inferences
+
+  Status text should update when game wins/loses
+  
   Animations:
     Reset - Broom or similar sweeps across
     Lose - Explosion
     Win - Fireworks
-  
+
+Misc
   Finish checking files with eslint
   Comments!
   Clean up unused library stuff

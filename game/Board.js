@@ -1,7 +1,8 @@
 import Settings from '../Settings.js';
-import {array, arrShuffle} from '../util/Array.js';
+import {array, arrShuffle, prettyPrint2DRectArray} from '../util/Array.js';
 import CSS from '../util/CSS.js';
 import {Point2D} from '../util/Util.js';
+import AI from './AI.js';
 import Cell from './Cell.js';
 
 const state = {
@@ -70,6 +71,12 @@ export default class Board {
     this.updateStatus();
   }
 
+  /** UI event handler, handles scaling the Minesweeper Board to its
+   * container's new size.
+   * 
+   * @param {number} containerWidth 
+   * @param {number} containerHeight 
+   */
   setContainerSize(containerWidth, containerHeight) {
     const borderThickness = 5;
 
@@ -111,18 +118,26 @@ export default class Board {
     if (Settings.features.showStatusText) {
       this.renderTargets.status.innerText = this.getStatus();
     }
+
+    prettyPrint2DRectArray(
+      this.toSummaryArray()
+    );
+
+    for (const inference of AI.firstOrderInfer(this.toSummaryArray())) {
+      console.log(inference.toString());
+    }
   }
 
   /** Recalculates the game status text.
    * @returns {string}
    */
   getStatus() {
-    const area = this.width * this.height;
-    const unclicked = area - this.clicked;
     const remainingFlags = this.mines - this.flagged;
-    const unclickedAndUnflagged = unclicked - this.flagged;
-    const minesPerUnclicked = remainingFlags / unclickedAndUnflagged;
-    const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
+    // const area = this.width * this.height;
+    // const unclicked = area - this.clicked;
+    // const unclickedAndUnflagged = unclicked - this.flagged;
+    // const minesPerUnclicked = remainingFlags / unclickedAndUnflagged;
+    // const minesPerUnclickedPercent = (minesPerUnclicked * 100).toFixed(2);
 
     return [
       `${this.mines} 💣    ${remainingFlags} 🚩`,
@@ -142,6 +157,7 @@ export default class Board {
 
   /** Click handler. "Clicks" a cell. If it was a "zero", clicks all adjacent cells.
    * @param {Point2D} clickLocation 
+   * @param {boolean} isRecursiveCall 
    */
   click(clickLocation, isRecursiveCall = false) {
     if (this.gameState !== state.playing) return;
@@ -168,8 +184,7 @@ export default class Board {
   }
 
   /** Right-click handler. Plants or removes a flag on a cell.
-   * @param {Point2D} clickLocation 
-   * @returns 
+   * @param {Point2D} clickLocation
    */
   toggleFlag(clickLocation) {
     if (this.gameState !== state.playing) return;
@@ -308,6 +323,23 @@ export default class Board {
    */
   getRemainingFlags() {
     return this.mines - this.flagged;
+  }
+
+  /**
+   * @returns {(string[])[]}
+   *    A rectangular 2D array of chars representing the board status.
+   *    See comment on Cell.toSummarChar() for the character encodings.
+   */
+  toSummaryArray() {
+    const ret = array(this.width, this.height);
+    
+    for (let x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        ret[x][y] = this.board[x][y].toSummaryChar();
+      }
+    }
+
+    return ret;
   }
 }
 

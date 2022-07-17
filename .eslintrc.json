@@ -46,6 +46,11 @@
     "object-curly-spacing": "off",
     "padded-blocks": "off",
     "eol-last": ["warn", "never"],
+    "space-before-function-paren": ["warn", {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+    }],
 
     // It's a hobby project and I do what I want.
     "no-extend-native": "off"

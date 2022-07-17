@@ -1,5 +1,5 @@
-import Settings from "../Settings.js";
-import { Point2D } from "../util/Util.js";
+import Settings from '../Settings.js';
+import { Point2D } from '../util/Util.js';
 
 export default class Cell {
   /**
@@ -68,6 +68,27 @@ export default class Cell {
     this.flagged = true;
     redraw(this);
   }
+
+  /**
+   * @returns {string}
+   *    A char representing the cell status.
+   *    "*" - clicked (exploded) mine
+   *    " " - clicked & safe, with zero neighbor mines
+   *    "1" - clicked & safe with 1 neighbor mine
+   *    "2" - clicked & safe with 2 neighbor mines
+   *    ... etc
+   *    "?" - unclicked, without flag
+   *    "F" - unclicked, with flag
+   */
+  toSummaryChar() {
+    if (this.clicked) {
+      if (this.mine) return '*';
+      return this.neighborMinesCount || ' ';
+    }
+
+    if (this.flagged) return 'F';
+    return '?';
+  }
 }
 
 /** Initializes HTML elements used to display this Cell.
@@ -96,11 +117,11 @@ function createMineCellElements(parent, cell, x, y) {
   const button = document.createElement('button');
   button.onclick = function () {
     parent.click(new Point2D(x, y));
-  }
+  };
   button.oncontextmenu = function () {
-    parent.toggleFlag(new Point2D(x, y))
+    parent.toggleFlag(new Point2D(x, y));
     return false; // Suppress default right-click behavior
-  }
+  };
   div.appendChild(button);
 
   // Create text element, used after the Cell is clicked.

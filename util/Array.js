@@ -1,4 +1,5 @@
 import { randInt } from './Random.js';
+import { padStringLeft } from './Util.js';
 
 /** Creates a new blank array with the specified dimension(s).
  * 
@@ -26,6 +27,14 @@ export function array(...dimensions) {
   return arr;
 }
 
+Array.prototype.pushAll = function (array) {
+  for (const element of array) {
+    this.push(element);
+  }
+
+  return this.length;
+};
+
 /** Array Remove - By John Resig (MIT Licensed)
  * Removes elements from an array.
  * 
@@ -33,7 +42,7 @@ export function array(...dimensions) {
  * @param {number} to 
  * @returns {Array}
  */
-Array.prototype.remove = function(from, to) {
+Array.prototype.remove = function (from, to) {
   const rest = this.slice((to || from) + 1 || this.length);
   this.length = from < 0 ? this.length + from : from;
   return this.push(...rest);
@@ -78,3 +87,43 @@ export function arrShuffle(array, randomFunc) {
 
   return ret;
 }
+
+export const prettyPrint2DRectArray = (function () {
+  /**
+   * @param {*} value 
+   * @param {*[]} printAsBlank 
+   * @returns {string}
+   */
+  function toString(value, printAsBlank) {
+    if (value === null || value === undefined) return ' ';
+    if (printAsBlank.includes(value)) return ' ';
+
+    try {
+      return value.toString();
+    } catch {
+      return value + '';
+    }
+  }
+
+  return function prettyPrint2DRectArray(array, ...printAsBlank) {
+    let longest = 0;
+
+    for (let x = 0; x < array.length; x++) {
+      for (let y = 0; y < array[x].length; y++) {
+        const stringOf = toString(array[x][y], printAsBlank);
+        if (stringOf.length > longest) longest = stringOf.length;
+      }
+    }
+
+    let prettyPrint = '';
+
+    for (let y = 0; y < array[0].length; y++) {
+      for (let x = 0; x < array.length; x++) {
+        prettyPrint += padStringLeft(toString(array[x][y], printAsBlank), longest) + ' ';
+      }
+      prettyPrint += '\n';
+    }
+    
+    console.log(prettyPrint);
+  };
+})();
