@@ -119,12 +119,30 @@ export default class Board {
       this.renderTargets.status.innerText = this.getStatus();
     }
 
-    prettyPrint2DRectArray(
-      this.toSummaryArray()
-    );
+    if (Settings.debug.logInferences) {
+      prettyPrint2DRectArray(
+        this.toSummaryArray()
+      );
+      for (const inference of AI.firstOrderInfer(this.toSummaryArray())) {
+        console.log(inference.toString());
+      }
+    }
 
-    for (const inference of AI.firstOrderInfer(this.toSummaryArray())) {
-      console.log(inference.toString());
+    if (Settings.features.autoPlayInferences) {
+      const inference = AI.firstOrderInfer(this.toSummaryArray())[0];
+
+      if (inference) {
+        switch (inference.type) {
+
+        case 'safe':
+          this.click(inference.location);
+          break;
+
+        case 'mine':
+          this.toggleFlag(inference.location);
+          break;
+        }
+      }
     }
   }
 
