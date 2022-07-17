@@ -196,4 +196,20 @@ class Inference {
 
     return `(${this.location.x}, ${this.location.y}) is ${descriptionOf[this.type]}`;
   }
+
+  /**
+   * @param {Board} board 
+   */
+  play(board) {
+    switch (this.type) {
+
+    case 'safe':
+      board.click(this.location);
+      break;
+
+    case 'mine':
+      board.toggleFlag(this.location);
+      break;
+    }
+  }
 }

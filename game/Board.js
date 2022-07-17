@@ -128,20 +128,17 @@ export default class Board {
       }
     }
 
-    if (Settings.features.autoPlayInferences) {
+    if (Settings.features.autoPlayInferences.enabled) {
+      const board = this;
       const inference = AI.firstOrderInfer(this.toSummaryArray())[0];
 
       if (inference) {
-        switch (inference.type) {
-
-        case 'safe':
-          this.click(inference.location);
-          break;
-
-        case 'mine':
-          this.toggleFlag(inference.location);
-          break;
-        }
+        setTimeout(
+          function () {
+            inference.play(board);
+          },
+          Settings.features.autoPlayInferences.delay
+        );
       }
     }
   }

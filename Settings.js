@@ -1,7 +1,10 @@
 const Settings = {
   features: {
     showStatusText: true,
-    autoPlayInferences: true,
+    autoPlayInferences: {
+      enabled: true,
+      delay: 100,
+    },
   },
   debug: {
     showMines: false,
